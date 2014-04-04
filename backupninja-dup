@@ -1,0 +1,73 @@
+#!/bin/bash
+# vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
+#
+# Copyright (C) 2014 Alexey Remizov <alexey@remizov.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+print_usage() {
+cat << EOF
+
+Usage: backupninja-dup <config> <command>
+
+  <config> is name of configuration file <config>.dup
+
+  <command> is one of
+    status - get current status of backup repository
+    list   - lists the files currently backed up in the archive
+EOF
+}
+
+dupconfig=$1
+command=$2
+
+conffile='/etc/backupninja.conf'
+libdirectory="/usr/lib/backupninja"
+
+. $libdirectory/tools
+
+setfile $conffile
+
+getconf configdirectory /etc/backup.d
+
+dupconfigfile="$configdirectory/$dupconfig.dup"
+if [ ! -f $dupconfigfile ]; then
+   echo "Can't find config of \`$dupconfig'"
+   print_usage
+   exit 2
+fi
+
+setfile $dupconfigfile
+
+setsection gpg
+getconf password
+
+setsection dest
+getconf desturl
+getconf ftp_password
+
+export PASSPHRASE=$password
+export FTP_PASSWORD=$ftp_password
+
+case $command in
+   status)
+      duplicity collection-status $desturl
+      ;;
+   list)
+      duplicity list $desturl
+      ;;
+   *)
+      echo "Unknown command \`$command'"
+      print_usage
+      exit 2
+      ;;
+esac
