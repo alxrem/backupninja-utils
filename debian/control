@@ -1,0 +1,16 @@
+Source: backupninja-utils
+Section: admin
+Priority: extra
+Maintainer: Alexey Remizov <alexey@remizov.org>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: https://github.com/alxrem/backupninja-utils
+Vcs-Git: https://github.com/alxrem/backupninja-utils.git
+Vcs-Browser: https://github.com/alxrem/backupninja-utils
+
+Package: backupninja-utils
+Architecture: all
+Depends: ${misc:Depends}, backupninja, duplicity
+Description: Utilities for maintenance of backupninja
+ * backupninja-retry restarts bacukpninja in case of error
+ * backupninja-dup helps to maintain archives, created by duplicity
