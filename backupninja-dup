@@ -56,12 +56,14 @@ getconf ftp_password
 export PASSPHRASE=$password
 export FTP_PASSWORD=$ftp_password
 
+if [ "$command" = 'status' ]; then
+   command='collection-status'
+fi
+
 case $command in
    verify|restore)
       args="$desturl $@"
       ;;
-   status)
-      command="collection-status"
    *)
       args="$@ $desturl"
       ;;
