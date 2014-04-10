@@ -1,0 +1,8 @@
+#!/bin/sh
+
+RETRY=${1:-3}
+
+while [ $RETRY -gt 0 ]; do
+	[ -z "$(/usr/sbin/backupninja -d 2>&1 | grep Fatal)" ] && break
+	RETRY=$((RETRY-1))
+done
