@@ -17,18 +17,16 @@
 print_usage() {
 cat << EOF
 
-Usage: backupninja-dup <config> <command>
+Usage: backupninja-dup <config> <command> <args>
 
-  <config> is name of configuration file <config>.dup
-
-  <command> is one of
-    status - get current status of backup repository
-    list   - lists the files currently backed up in the archive
+  <command> and <args> are passed duplicity as is
+  and the remove url and password are taken
+  from the appropriate <config>.dup
 EOF
 }
 
-dupconfig=$1
-command=$2
+dupconfig=$1; shift
+command=$1; shift
 
 conffile='/etc/backupninja.conf'
 libdirectory="/usr/lib/backupninja"
@@ -59,15 +57,14 @@ export PASSPHRASE=$password
 export FTP_PASSWORD=$ftp_password
 
 case $command in
+   verify|restore)
+      args="$desturl $@"
+      ;;
    status)
-      duplicity collection-status $desturl
-      ;;
-   list)
-      duplicity list $desturl
-      ;;
+      command="collection-status"
    *)
-      echo "Unknown command \`$command'"
-      print_usage
-      exit 2
+      args="$@ $desturl"
       ;;
 esac
+
+duplicity $command $args
