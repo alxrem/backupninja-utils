@@ -46,6 +46,8 @@ fi
 
 setfile $dupconfigfile
 
+getconf options
+
 setsection gpg
 getconf password
 
@@ -69,4 +71,4 @@ case $command in
       ;;
 esac
 
-duplicity $command $args
+duplicity $options $command $args
